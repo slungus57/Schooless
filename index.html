@@ -748,6 +748,46 @@ table.table { width: 100%; border-collapse: collapse; font-size: 13px; min-width
   .pm-grid { grid-template-columns: 1fr; }
 }
 
+/* ============ v3: proxy browser / emulator / search ============ */
+.proxy-bar .search-box { min-width: 0; }
+.proxy-hint {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-top: var(--sp-3); padding: 12px 16px;
+  background: var(--panel-2, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 10px; font-size: 13px; line-height: 1.55; color: var(--muted);
+}
+.proxy-hint .mono { font-family: var(--mono); color: var(--accent); }
+/* v5: engine stage toolbar + health banner */
+.engine-tools {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: var(--sp-3); padding: 10px 14px;
+  background: var(--panel-2, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.08));
+  border-radius: 10px; font-size: 13px;
+}
+.engine-tools .et-label { color: var(--muted); margin-right: 2px; }
+.engine-health {
+  display: none; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: var(--sp-2); padding: 10px 14px;
+  background: rgba(255, 180, 70, 0.08);
+  border: 1px solid rgba(255, 180, 70, 0.35);
+  border-radius: 10px; font-size: 13px; color: var(--muted); line-height: 1.5;
+}
+.engine-health.show { display: flex; }
+.engine-health .eh-dot { width: 8px; height: 8px; border-radius: 50%; background: #ffb446; flex: none; }
+.emu-drop {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+  padding: 44px 24px; border: 2px dashed var(--border, rgba(255, 255, 255, 0.14));
+  border-radius: 14px; text-align: center; background: var(--panel-2, rgba(255, 255, 255, 0.02));
+  transition: border-color .15s ease, background .15s ease;
+}
+.emu-drop.over { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.emu-drop svg { width: 34px; height: 34px; opacity: .7; }
+.emu-drop .ed-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.emu-drop .ed-sub { margin-top: 6px; max-width: 640px; }
+.engine-chips { flex-wrap: wrap; }
+
 </style>
 </head>
 <body>
@@ -757,7 +797,7 @@ table.table { width: 100%; border-collapse: collapse; font-size: 13px; min-width
 <noscript><div style="max-width:640px;margin:80px auto;padding:24px;font-family:sans-serif;color:#F1F2F4;background:#17191E;border-radius:12px">
 <h1>SCHOOLess</h1><p>Schooless needs JavaScript enabled to run the directory and embedded viewer.</p></div></noscript>
 <script>
-/* Built 2026-11-13T21:57:37.370Z — SCHOOLess. See README for architecture. */
+/* Built 2026-11-14T04:41:56.969Z — SCHOOLess. See README for architecture. */
 const ADMIN_HASH = "740e0cdba230421a48ec19133c68777f9672dc7350eae46c138530a4d6b87021";
 </script>
 <script>
@@ -830,6 +870,9 @@ const I = (() => {
     hash: wrap('<line x1="4" x2="20" y1="9" y2="9"/><line x1="4" x2="20" y1="15" y2="15"/><line x1="10" x2="8" y1="3" y2="21"/><line x1="16" x2="14" y1="3" y2="21"/>'),
     keyboard: wrap('<rect width="20" height="16" x="2" y="4" rx="2"/><path d="M6 8h.01"/><path d="M10 8h.01"/><path d="M14 8h.01"/><path d="M18 8h.01"/><path d="M8 12h.01"/><path d="M12 12h.01"/><path d="M16 12h.01"/><path d="M7 16h10"/>'),
     refresh: wrap('<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>'),
+    cpu: wrap('<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/>'),
+    navigation: wrap('<polygon points="3 11 22 2 13 21 11 13 3 11"/>'),
+    send: wrap('<path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>'),
   };
   return icons;
 })();
@@ -1312,6 +1355,18 @@ const RESOURCES = [
 
 /* ============ Web Experiences (all VERIFIED embeddable by pixel-probe, 2026-11-13) ============ */
 const EXPERIENCES = [
+  { id: 'exp-roblox-minigames', name: 'Roblox Mini Games (now.gg)', category: 'Cloud',
+    url: 'https://now.gg/games/roblox-mini-games.html',
+    description: 'now.gg\'s official Roblox mini games portal — play Roblox experiences in your browser, no download. Verified embeddable, runs inside Schooless.',
+    tags: ['Roblox', 'Cloud gaming', 'now.gg'], status: 'verified', embeddable: true, aspect: 'flex', featured: true, dateAdded: '2026-11-13' },
+  { id: 'exp-roblox-cloud', name: 'Roblox (now.gg cloud player)', category: 'Cloud',
+    url: 'https://universityequality.com/',
+    description: 'Full Roblox client streamed by now.gg behind a university front (the login screen with Create Account / Sign In). The cloud player blocks embedding — open externally, then tap Roblox → Play in Browser.',
+    tags: ['Roblox', 'Cloud gaming', 'External'], status: 'external', embeddable: false, featured: true, dateAdded: '2026-11-13' },
+  { id: 'exp-minecraft-nowgg', name: 'Minecraft (now.gg)', category: 'Cloud',
+    url: 'https://now.gg/games/minecraft.html',
+    description: 'now.gg\'s official Minecraft page — cloud gaming portal for Minecraft and Minecraft-styled games in your browser, no download. Verified embeddable, runs inside Schooless.',
+    tags: ['Minecraft', 'Cloud gaming', 'now.gg'], status: 'verified', embeddable: true, aspect: 'flex', dateAdded: '2026-11-14' },
   { id: 'exp-skribbl', name: 'skribbl.io', category: 'Multiplayer',
     url: 'https://skribbl.io/',
     description: 'Free multiplayer drawing and guessing game. Draw, guess, and chat with players around the world.',
@@ -1354,17 +1409,78 @@ const EXPERIENCES = [
     tags: ['FPS', '.io'], status: 'verified', embeddable: true, aspect: 'flex' },
 ];
 
+/* ============ Emulator (EmulatorJS) — consoles + verified ROM directory ============ */
+const EMULATOR = {
+  cdn: 'https://cdn.emulatorjs.org/stable/data/',
+  consoles: [
+    { id: 'nes',     name: 'Nintendo (NES)',       short: 'NES',   core: 'nes',              exts: '.nes .zip .7z',       color: '#E76F51' },
+    { id: 'snes',    name: 'Super Nintendo',       short: 'SNES',  core: 'snes',             exts: '.sfc .smc .zip .7z', color: '#8AB17D' },
+    { id: 'gb',      name: 'Game Boy / Color',     short: 'GB',    core: 'gb',               exts: '.gb .gbc .zip .7z',  color: '#9B8AA6' },
+    { id: 'gba',     name: 'Game Boy Advance',     short: 'GBA',   core: 'gba',              exts: '.gba .zip .7z',      color: '#6AA6FF' },
+    { id: 'n64',     name: 'Nintendo 64',          short: 'N64',   core: 'n64',              exts: '.n64 .z64 .v64 .zip .7z', color: '#F0955E' },
+    { id: 'nds',     name: 'Nintendo DS',          short: 'NDS',   core: 'nds',              exts: '.nds .zip .7z',      color: '#A99AFB' },
+    { id: 'genesis', name: 'Sega Genesis',         short: 'GEN',   core: 'segaMD',           exts: '.md .bin .zip .7z',  color: '#5FBF8F' },
+    { id: 'psx',     name: 'PlayStation',          short: 'PS1',   core: 'psx',              exts: '.bin .cue .chd .pbp .zip .7z', color: '#EF8BB8' },
+  ],
+  romDirectories: [
+    {
+      id: 'myrient', name: 'Myrient', url: 'https://myrient.erista.me/downloads/roms/',
+      description: 'No-intro verified ROM sets for dozens of systems. Sometimes offline — if it does not load, try another directory below.',
+      status: 'verified', embeddable: true, primary: true,
+    },
+    {
+      id: 'edgeemu', name: 'Edge Emulation', url: 'https://edgeemu.net/',
+      description: 'Long-running console ROM directory (Atari, Commodore, Nintendo, Sega and more).',
+      status: 'verified', embeddable: true,
+    },
+    {
+      id: 'romsfun', name: 'RomsFun', url: 'https://romsfun.com/roms',
+      description: 'Popular ROMs portal with per-console sections.',
+      status: 'verified', embeddable: true,
+    },
+    {
+      id: 'romsdl', name: 'RomsDL', url: 'https://romsdl.net/',
+      description: 'ROM downloads across major consoles.',
+      status: 'verified', embeddable: true,
+    },
+  ],
+  legal: 'EmulatorJS provides the console emulation; Schooless ships no games. Only load ROMs you legally own (personal backups) — respect copyright.',
+};
+
+/* ============ Built-in proxy engines ============
+ * kind:
+ *  - 'browser'  : embeddable app with its own address bar (loads any site itself)
+ *  - 'service'  : embeddable proxy front-end; enter the URL in ITS search box
+ *  - 'direct'   : load the target URL in our sandboxed iframe; on failure,
+ *                 fall back to a blocked-card with one-click engine launches
+ * There is no server-side fetch proxy in a single-file app; these embeddable
+ * services are what actually renders other sites inside Schooless.
+ * All verified embeddable on 2026-11-14. */
+const PROXY_ENGINES = [
+  { id: 'direct', name: 'Direct', kind: 'direct', url: null,
+    note: 'Loads the URL in our sandboxed viewer first. Wikipedia-style sites (allow iframes) work instantly. Blocked sites fall back to a card with one-click engine options.' },
+  { id: 'cherri-browser', name: 'Cherri Browser', kind: 'browser',
+    url: 'https://cherrion.top/',
+    note: 'A full browser app in a tab — it loads any site itself (it has its own address bar). Dismiss its welcome tour (×), then type the address in its bar and press Enter.' },
+  { id: 'croxy', name: 'CroxyProxy', kind: 'service',
+    url: 'https://www.croxyproxy.com/',
+    note: 'Web proxy service. Type or paste the address into its URL box and press Go — the site loads inside the proxy frame.' },
+  { id: 'blockaway', name: 'BlockAway', kind: 'service',
+    url: 'https://www.blockaway.net/',
+    note: 'Web proxy service. Enter the address in its box and press Go.' },
+];
+
 /* ============ Viewer source registry ============ */
 const SOURCES = [
   {
-    id: 'direct', name: 'Direct Web Experiences', baseUrl: '(various)',
+    id: 'direct', name: 'Direct Games & Verified Sites', baseUrl: '(various)',
     embedFormat: '(site-specific)',
-    allowedDomains: ['skribbl.io', 'play.pokemonshowdown.com', 'www.photopea.com', 'codenames.game', 'papergames.io', 'iogames.space', 'slither.io', '2048game.com', 'krunker.io', 'shellshock.io', 'cherrion.top'],
+    allowedDomains: ['skribbl.io', 'play.pokemonshowdown.com', 'www.photopea.com', 'codenames.game', 'papergames.io', 'iogames.space', 'slither.io', '2048game.com', 'krunker.io', 'shellshock.io', 'cherrion.top', 'now.gg', 'myrient.erista.me', 'edgeemu.net', 'romsfun.com', 'romsdl.net', 'www.croxyproxy.com', 'croxyproxy.com', 'blockaway.net', 'www.blockaway.net', 'universityequality.com'],
     permissions: { fullscreen: true, pointerLock: false, autoplay: true },
     aspectRatio: 'flex',
     status: 'verified',
-    notes: 'Each site pixel-probe verified embeddable on 2026-11-13. See Web Experiences directory and the proxy entries marked verified.',
-    gamesCount: 10,
+    notes: 'Each domain pixel-probe verified embeddable on 2026-11-13 (now.gg mini-games page, myrient ROM directory included). External-only entries open in a new tab.',
+    gamesCount: 12,
   },
 ];
 
@@ -1382,8 +1498,8 @@ const Player = {
     const dom = domainOf(url);
     return `
     <div class="player-wrap">
-      <a class="back-link" href="#/experiences">${I.arrowLeft} Back to Web Experiences</a>
-      <div class="viewer-banner">${I.shield} Viewing <b style="margin:0 4px">${esc(dom)}</b> inside Schooless — allowlisted site, sandboxed viewer. <span style="margin-left:auto; white-space:nowrap">${I.keyboard} F fullscreen · R reload</span></div>
+      <a class="back-link" href="#/games">${I.arrowLeft} Back to Games</a>
+      <div class="viewer-banner">${I.shield} Viewing <b style="margin:0 4px">${esc(dom)}</b> inside Schooless — sandboxed viewer. <span style="margin-left:auto; white-space:nowrap">${I.keyboard} F fullscreen · R reload</span></div>
       <div class="player-card">
         <div class="player-toolbar">
           <div class="pt-info">
@@ -1405,7 +1521,7 @@ const Player = {
             <iframe id="playerFrame" class="player-frame" title="${esc(name || dom)} — embedded website"
               src="${esc(url)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
               allow="autoplay; fullscreen; clipboard-write" allowfullscreen
-              sandbox="allow-forms allow-modals allow-pointer-lock allow-popups allow-same-origin allow-scripts"></iframe>
+              sandbox="allow-downloads allow-forms allow-modals allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
           </div>
           <div class="player-error" id="playerError">
             <span style="color:var(--warn)">${I.alert}</span>
@@ -1414,7 +1530,7 @@ const Player = {
             <div class="pe-actions">
               <button class="btn btn-primary btn-sm" id="peRetry">${I.refresh} Try Again</button>
               <a class="btn btn-ghost btn-sm" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${I.external} Open Original Website</a>
-              <a class="btn btn-ghost btn-sm" href="#/experiences">${I.grid} Back to Web Experiences</a>
+              <a class="btn btn-ghost btn-sm" href="#/games">${I.grid} Back to Games</a>
             </div>
           </div>
         </div>
@@ -1452,6 +1568,130 @@ const Player = {
     document.addEventListener('keydown', this._keyHandler);
   },
 
+  /* ============ v5: unified proxy-engine stage ============
+   * Renders the engine app in the standard sandboxed viewer, plus a toolbar
+   * under it: Retry (with one automatic retry on first load), swap to any
+   * other engine, open the engine externally, copy the pending target URL.
+   * Also runs a no-cors reachability probe of the engine domain and shows a
+   * warning banner when the network drops the engine's files (e.g. Cherri's
+   * splash stalling at "A file didn't load" on filtered networks). */
+  engineStage(engineId, targetUrl) {
+    const eng = PROXY_ENGINES.find(e => e.id === engineId);
+    if (!eng || !eng.url) return '';
+    const dom = domainOf(eng.url);
+    return `
+    <div class="engine-wrap">
+      ${Player.viewer(eng.url, eng.name)}
+      <div class="engine-health" id="engineHealth"><span class="eh-dot"></span><span id="engineHealthText"></span></div>
+      <div class="engine-tools" data-engine-tools>
+        <span class="et-label">${I.wrench || I.info} <b>${esc(eng.name)}</b> tools:</span>
+        <button class="btn btn-ghost btn-sm" id="etRetry">${I.refresh} Retry</button>
+        ${PROXY_ENGINES.filter(e => e.url && e.id !== engineId).map(e =>
+          `<button class="btn btn-ghost btn-sm" data-et-swap="${e.id}">${I.globe} ${esc(e.name)}</button>`).join('')}
+        ${targetUrl ? `<button class="btn btn-ghost btn-sm" id="etCopy">${I.hash} Copy URL</button>` : ''}
+        <a class="btn btn-ghost btn-sm" href="${esc(eng.url)}" target="_blank" rel="noopener noreferrer">${I.external} Open ${esc(eng.name)} externally</a>
+      </div>
+      <div class="proxy-hint">${I.info} <b>${esc(eng.name)}</b> — ${esc(eng.note)}${targetUrl ? ` Your address <span class="mono">${esc(domainOf(targetUrl))}</span> ${navigator.clipboard ? 'is on your clipboard' : ''} — paste it there and press Enter.` : ''}</div>
+    </div>`;
+  },
+
+  bindEngine(engineId, targetUrl, onSwap) {
+    Player.bindViewer(PROXY_ENGINES.find(e => e.id === engineId)?.url);
+    const frame = $('#playerFrame');
+    const health = $('#engineHealth'), healthText = $('#engineHealthText');
+    let retries = 0;
+
+    const reloadFrame = () => {
+      if (!frame) return;
+      frame.src = PROXY_ENGINES.find(e => e.id === engineId)?.url || frame.src;
+    };
+
+    // Retry button: manual, unlimited
+    $('#etRetry')?.addEventListener('click', () => {
+      retries = 0; hideHealth(); reloadFrame();
+      Toast.show('info', 'Reloading ' + (PROXY_ENGINES.find(e => e.id === engineId)?.name || 'engine'), 'If it stalls again, swap engines below.');
+    });
+
+    // engine swap
+    $$('[data-et-swap]').forEach(btn => btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-et-swap');
+      if (onSwap) onSwap(id);
+    }));
+
+    // copy target URL
+    $('#etCopy')?.addEventListener('click', async () => {
+      if (!targetUrl) return;
+      try { await navigator.clipboard.writeText(targetUrl); Toast.show('ok', 'Copied', targetUrl); }
+      catch { Toast.show('warn', 'Copy failed', targetUrl); }
+    });
+
+    const showHealth = (msg) => { if (healthText) healthText.textContent = msg; health?.classList.add('show'); };
+    const hideHealth = () => health?.classList.remove('show');
+
+    // One automatic retry: if the frame hasn't finished loading shortly after
+    // the load event (common when an asset file silently fails on a filtered
+    // network), reload it once — the second attempt often pulls everything.
+    if (frame) {
+      frame.addEventListener('load', () => {
+        setTimeout(() => { if (retries === 0) { retries = 1; reloadFrame(); } }, 1500);
+      }, { once: true });
+    }
+
+    // Reachability probe: no-cors fetch of the engine origin. An opaque
+    // response (resolve) = the domain answers; a rejection usually means the
+    // network blocked it entirely (DNS/filter) — warn and suggest a swap.
+    fetch(PROXY_ENGINES.find(e => e.id === engineId)?.url, { mode: 'no-cors', cache: 'no-store' })
+      .then(() => { /* domain reachable — stay quiet */ })
+      .catch(() => showHealth('The engine domain could not be reached from this network. Retry, or swap to another engine below.'));
+  },
+
+  /* Proxy-browser mode: when the direct iframe is blocked (timeout), swap the
+   * error card for proxy fallbacks — one-click launch of every engine, plus
+   * new-tab. Each engine button re-points THIS frame at the engine app, so the
+   * user lands inside e.g. Cherri with the address ready to paste. */
+  bindProxyFallback(url) {
+    const errBox = $('#playerError');
+    if (!errBox) return;
+    const engines = PROXY_ENGINES.filter(e => e.url);
+    const watch = setInterval(() => {
+      if (errBox.classList.contains('show')) {
+        clearInterval(watch);
+        errBox.innerHTML = `
+          <span style="color:var(--warn)">${I.shield}</span>
+          <div class="pe-title">${esc(domainOf(url))} blocks direct embedding</div>
+          <div class="pe-sub">This site refuses to be framed (X-Frame-Options / CSP). Launch an engine below — it loads the site for you. <span class="mono">${esc(url)}</span> is on your clipboard.</div>
+          <div class="pe-actions">
+            ${engines.map(e => `<button class="btn btn-primary btn-sm" data-pf-engine="${e.id}">${I.globe} ${esc(e.name)}</button>`).join('')}
+            <button class="btn btn-ghost btn-sm" id="pfCopy">${I.hash} Copy URL</button>
+            <a class="btn btn-ghost btn-sm" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${I.external} New tab</a>
+          </div>
+          <div class="pe-sub" style="margin-top:10px">Tip: in the engine's address bar (Cherri) or URL box (CroxyProxy / BlockAway), paste the address and press Enter.</div>`;
+        // put URL on clipboard for quick pasting into the engine
+        try { navigator.clipboard?.writeText(url); } catch { /* clipboard may need gesture */ }
+        $('#pfCopy')?.addEventListener('click', async () => {
+          try { await navigator.clipboard.writeText(url); Toast.show('ok', 'Copied', url); }
+          catch { Toast.show('warn', 'Copy failed', url); }
+        });
+        $$('[data-pf-engine]').forEach(btn => btn.addEventListener('click', () => {
+          const eng = PROXY_ENGINES.find(e => e.id === btn.getAttribute('data-pf-engine'));
+          if (!eng) return;
+          errBox.classList.remove('show');
+          const frame = $('#playerFrame');
+          if (frame) {
+            frame.src = eng.url;
+            const t = $('#playerLoading'); t?.classList.remove('hidden');
+            frame.addEventListener('load', () => { t?.classList.add('hidden'); }, { once: true });
+          }
+          const info = $('#proxyStage .proxy-hint');
+          if (info) info.innerHTML = `${I.info} <b>${esc(eng.name)}</b> — ${esc(eng.note)} Paste <span class="mono">${esc(domainOf(url))}</span> and press Enter.`;
+          // v5: rebuild the hint area with the full engine toolbar via the page
+          document.dispatchEvent(new CustomEvent('schooless:launch-engine', { detail: { engine: eng.id, targetUrl: url } }));
+        }));
+      }
+    }, 500);
+    setTimeout(() => clearInterval(watch), 25000);
+  },
+
   destroy() {
     if (this._keyHandler) { document.removeEventListener('keydown', this._keyHandler); this._keyHandler = null; }
   },
@@ -1459,8 +1699,8 @@ const Player = {
 
 </script>
 <script>
-/* SCHOOLess — page views: Home, Proxies, Web Experiences,
- * Recently Added, Favorites, Settings.
+/* SCHOOLess — page views: Home, Games, Proxy Browser, Emulator, Search,
+ * Proxies, Recently Added, Favorites, Settings.
  */
 'use strict';
 
@@ -1477,19 +1717,20 @@ const Pages = {
     <div class="container">
       <section class="hero">
         <h1>Your gateway to <span class="grad">everything.</span></h1>
-        <p>Proxies, web experiences, and useful resources. All in one place.</p>
+        <p>Games, proxies, a built-in browser, emulators and search. All in one place.</p>
         <div class="hero-search" id="heroSearch">
           ${I.search.replace('<svg', '<svg class="lead"')}
-          <input id="heroInput" type="search" placeholder="Search proxies, experiences, resources…" aria-label="Search Schooless" autocomplete="off">
+          <input id="heroInput" type="search" placeholder="Search games, proxies, tools…" aria-label="Search Schooless" autocomplete="off">
         </div>
         <div class="hero-actions">
-          <a class="btn btn-primary" href="#/proxies">${I.globe} Browse Proxies</a>
-          <a class="btn btn-ghost" href="#/experiences">${I.sparkles} Web Experiences</a>
+          <a class="btn btn-primary" href="#/games">${I.gamepad} Play Games</a>
+          <a class="btn btn-ghost" href="#/proxy">${I.shield} Proxy Browser</a>
+          <a class="btn btn-ghost" href="#/emulator">${I.cpu} Emulator</a>
         </div>
       </section>
 
       <section class="section">
-        ${UI.sectionHead('Featured sites', featured.length + featExp.length, '/proxies')}
+        ${UI.sectionHead('Featured games & sites', featured.length + featExp.length, '/games')}
         <div class="res-grid">
           ${featured.map(r => UI.resourceCard(r)).join('')}
           ${featExp.map(e => UI.resourceCard(e, 'experience')).join('')}
@@ -1502,7 +1743,7 @@ const Pages = {
       </section>
 
       <section class="section">
-        ${UI.sectionHead('Web Experiences', Content.experiences.length, '/experiences')}
+        ${UI.sectionHead('Games', Content.experiences.length, '/games')}
         <div class="res-grid">${Content.experiences.slice(0, 5).map(e => UI.resourceCard(e, 'experience')).join('')}</div>
       </section>
     </div>`;
@@ -1524,27 +1765,27 @@ const Pages = {
     });
   },
 
-  /* ================= WEB EXPERIENCES ================= */
-  experiences() {
+  /* ================= GAMES (verified embeddable sites) ================= */
+  games() {
     return { html: `
     <div class="container">
       <div class="page-head">
         <div>
-          <h1>Web Experiences</h1>
-          <div class="sub">Websites that run inside Schooless — every entry below was verified to allow embedding. No proxies, no tricks.</div>
+          <h1>Games</h1>
+          <div class="sub">Games that run inside Schooless — every entry below was verified to allow embedding. No downloads, no tricks.</div>
         </div>
-        <span class="tag tag-ok"><span class="st-dot st-verified"></span>${Content.experiences.length} verified sites</span>
+        <span class="tag tag-ok"><span class="st-dot st-verified"></span>${Content.experiences.filter(e => e.status === 'verified').length} verified embeds</span>
       </div>
       <div class="privacy-note">
         ${I.shield}
-        <div><b>Sandbox notice.</b> Embedded sites open in a restricted iframe on their official domains. They are independent services with their own privacy practices.</div>
+        <div><b>Sandbox notice.</b> Embedded games open in a restricted iframe on their official domains. They are independent services with their own privacy practices.</div>
       </div>
       <div class="toolbar">
         <div class="search-box">
           ${I.search}
-          <input id="expSearch" type="search" placeholder="Search experiences…" autocomplete="off">
+          <input id="expSearch" type="search" placeholder="Search games…" autocomplete="off">
         </div>
-        <select class="select" id="expSort" aria-label="Sort experiences">
+        <select class="select" id="expSort" aria-label="Sort games">
           <option value="default">Sort: Default</option>
           <option value="name">Name (A–Z)</option>
           <option value="category">By category</option>
@@ -1562,7 +1803,7 @@ const Pages = {
         if (sortSel.value === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
         if (sortSel.value === 'category') list.sort((a, b) => (a.category || '').localeCompare(b.category || ''));
         grid.innerHTML = list.map(e => UI.resourceCard(e, 'experience')).join('');
-        emptyBox.innerHTML = list.length ? '' : UI.empty('globe', 'No experiences found', 'Try a different search.');
+        emptyBox.innerHTML = list.length ? '' : UI.empty('gamepad', 'No games found', 'Try a different search.');
       };
       search?.addEventListener('input', debounce(apply, 120));
       sortSel?.addEventListener('change', apply);
@@ -1574,8 +1815,339 @@ const Pages = {
   viewer(params) {
     const url = params.get('u') || '';
     const name = params.get('n') || domainOf(url || '');
-    if (!isAllowedViewerUrl(url)) return { html: `<div class="container" style="padding-top:60px">${UI.empty('alert', 'Invalid URL', 'Only HTTPS links from the allowlist can be opened in the viewer.', `<a class="btn btn-ghost btn-sm" href="\x23/experiences">${I.arrowLeft} Back to Web Experiences</a>`)}</div>` };
+    if (!isAllowedViewerUrl(url)) return { html: `<div class="container" style="padding-top:60px">${UI.empty('alert', 'Invalid URL', 'Only HTTPS links from the allowlist can be opened in the viewer.', `<a class="btn btn-ghost btn-sm" href="\x23/games">${I.arrowLeft} Back to Games</a>`)}</div>` };
     return { html: Player.viewer(url, name), bind: () => Player.bindViewer(url) };
+  },
+
+  /* ================= PROXY BROWSER (built-in) ================= */
+  proxyBrowser(params) {
+    const startUrl = params.get('u') || '';
+    return { html: `
+    <div class="container" style="max-width:1200px">
+      <div class="page-head">
+        <div>
+          <h1>Proxy Browser</h1>
+          <div class="sub">Load sites that are normally blocked — directly when embedding is allowed, or through the built-in proxy engines.</div>
+        </div>
+      </div>
+      <div class="privacy-note">
+        ${I.shield}
+        <div><b>How this works.</b> Schooless has no server, so nothing is routed through us. <b>Direct</b> mode loads the site in a sandboxed frame (works for iframe-friendly sites like Wikipedia). Sites that block embedding load through the engines below — Cherri is a full browser app with its own address bar, CroxyProxy and BlockAway are proxy services where you paste the address into their URL box. Availability depends on those services and your network — follow your school's or workplace's policy.</div>
+      </div>
+      <div class="toolbar proxy-bar">
+        <div class="search-box" style="flex:1">
+          ${I.globe}
+          <input id="proxyUrl" type="text" placeholder="Enter a URL (e.g. discord.com) or search terms…" autocomplete="off" spellcheck="false" value="${esc(startUrl)}">
+        </div>
+        <button class="btn btn-primary" id="proxyGo">${I.send} Go</button>
+      </div>
+      <div class="chip-row" style="margin-bottom:var(--sp-4)" id="engineChips">
+        ${PROXY_ENGINES.map(e =>
+          `<button class="chip ${e.id === 'direct' ? 'active' : ''}" data-engine="${e.id}" title="${esc(e.note)}">${e.id === 'direct' ? I.zap : I.globe} ${esc(e.name)}</button>`).join('')}
+      </div>
+      <div id="engineCards" class="res-grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr));margin-bottom:var(--sp-4)"></div>
+      <div id="proxyStage"></div>
+    </div>`,
+    bind: () => {
+      const stage = $('#proxyStage');
+      const cards = $('#engineCards');
+      const input = $('#proxyUrl');
+      let engine = 'direct';
+
+      // engine quick-launch cards (clickable even without a URL)
+      const renderCards = () => {
+        cards.innerHTML = PROXY_ENGINES.filter(e => e.url).map(e => `
+          <article class="res-card" data-launch="${e.id}" style="cursor:pointer">
+            <div class="res-head">
+              <span class="res-letter">${e.id === 'cherri-browser' ? 'CH' : e.id === 'croxy' ? 'CX' : 'BA'}</span>
+              <div class="res-info">
+                <span class="res-name">${esc(e.name)}</span>
+                <span class="res-sub">${e.kind === 'browser' ? 'Full in-tab browser app' : 'Proxy service'}</span>
+              </div>
+            </div>
+          </article>`).join('') + `
+          <article class="res-card" data-launch="direct" style="cursor:pointer">
+            <div class="res-head">
+              <span class="res-letter">D</span>
+              <div class="res-info">
+                <span class="res-name">Direct</span>
+                <span class="res-sub">Sandboxed iframe</span>
+              </div>
+            </div>
+          </article>`;
+        $$('#engineCards [data-launch]').forEach(c => c.addEventListener('click', () => {
+          engine = c.getAttribute('data-launch');
+          $$('#engineChips .chip').forEach(x => x.classList.toggle('active', x.getAttribute('data-engine') === engine));
+          if ((input.value || '').trim()) render();
+          else launchEngine(engine);
+        }));
+      };
+
+      const normalize = (raw) => {
+        raw = (raw || '').trim();
+        if (!raw) return '';
+        if (/^https?:\/\//i.test(raw)) return raw;
+        if (/^[\w-]+(\.[\w-]+)+([/?#].*)?$/.test(raw)) return 'https://' + raw;
+        return ''; // plain search terms, not a URL
+      };
+
+      // open a proxy engine app full-width in the stage (v5: unified engine
+      // stage with Retry / swap / health-check toolbar)
+      const launchEngine = (engineId, targetUrl) => {
+        const eng = PROXY_ENGINES.find(e => e.id === engineId);
+        if (!eng || !eng.url) return;
+        stage.innerHTML = Player.engineStage(engineId, targetUrl || null);
+        Player.bindEngine(engineId, targetUrl || null, (swapId) => {
+          engine = swapId;
+          $$('#engineChips .chip').forEach(x => x.classList.toggle('active', x.getAttribute('data-engine') === swapId));
+          launchEngine(swapId, targetUrl || null);
+        });
+      };
+
+      const render = () => {
+        const raw = (input.value || '').trim();
+        const url = normalize(raw);
+        const eng = PROXY_ENGINES.find(e => e.id === engine);
+        if (!raw) { launchEngine(engine); return; }
+        if (!url) {
+          // plain terms → hand off to search
+          Router.go(`/search?q=${encodeURIComponent(raw)}`);
+          return;
+        }
+        if (engine === 'direct') {
+          stage.innerHTML = Player.viewer(url, domainOf(url));
+          Player.bindViewer(url);
+          Player.bindProxyFallback(url);
+          stage.insertAdjacentHTML('beforeend', `
+            <div class="proxy-hint" data-direct-tools>
+              ${I.info} <b>Direct mode.</b> Iframe-friendly sites (wikipedia.org etc.) load here. If the frame stays blank or shows a "refused to connect" error, the site blocks embedding — launch an engine:
+              <span class="pt-actions" style="display:inline-flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+                ${PROXY_ENGINES.filter(e => e.url).map(e => `<button class="btn btn-primary btn-sm" data-launch-engine="${e.id}">${I.globe} ${esc(e.name)}</button>`).join('')}
+                <button class="btn btn-ghost btn-sm" id="dhCopy">${I.hash} Copy URL</button>
+                <a class="btn btn-ghost btn-sm" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${I.external} New tab</a>
+              </span>
+            </div>`);
+          $('#dhCopy')?.addEventListener('click', async () => {
+            try { await navigator.clipboard.writeText(url); Toast.show('ok', 'Copied', url); }
+            catch { Toast.show('warn', 'Copy failed', url); }
+          });
+          $$('[data-launch-engine]').forEach(btn => btn.addEventListener('click', () => {
+            launchEngine(btn.getAttribute('data-launch-engine'), url);
+          }));
+        } else {
+          launchEngine(engine, url);
+        }
+      };
+
+      $('#proxyGo')?.addEventListener('click', render);
+      input?.addEventListener('keydown', (e) => { if (e.key === 'Enter') render(); });
+      // v5: fallback-card engine buttons ask the page to launch the full stage
+      const launchHandler = (ev) => {
+        const { engine: engId, targetUrl } = ev.detail || {};
+        if (!engId) return;
+        engine = engId;
+        $$('#engineChips .chip').forEach(x => x.classList.toggle('active', x.getAttribute('data-engine') === engId));
+        launchEngine(engId, targetUrl);
+      };
+      document.addEventListener('schooless:launch-engine', launchHandler);
+      App.onPageTeardown(() => document.removeEventListener('schooless:launch-engine', launchHandler));
+      $$('#engineChips .chip').forEach(c => c.addEventListener('click', () => {
+        engine = c.getAttribute('data-engine');
+        $$('#engineChips .chip').forEach(x => x.classList.toggle('active', x === c));
+        if ((input.value || '').trim()) render();
+        else launchEngine(engine);
+      }));
+      renderCards();
+      if ((input.value || '').trim()) render();
+    } };
+  },
+
+  /* ================= EMULATOR (EmulatorJS) ================= */
+  emulator(params) {
+    const core = params.get('core') || '';
+    return { html: `
+    <div class="container" style="max-width:1200px">
+      <div class="page-head">
+        <div>
+          <h1>Emulator</h1>
+          <div class="sub">Retro console emulation powered by EmulatorJS — runs entirely in your browser.</div>
+        </div>
+        <span class="tag tag-ok"><span class="st-dot st-verified"></span>${EMULATOR.consoles.length} systems</span>
+      </div>
+      <div class="privacy-note">
+        ${I.cpu}
+        <div><b>Legal.</b> ${esc(EMULATOR.legal)}</div>
+      </div>
+
+      <section class="section" style="margin-top:var(--sp-5)">
+        ${UI.sectionHead('Play a ROM from your device', '')}
+        <div class="emu-drop" id="emuDrop">
+          ${I.upload}
+          <div class="ed-title">Drop a ROM file here, or <button class="btn btn-primary btn-sm" id="emuPick">${I.upload} Choose file</button></div>
+          <div class="ed-sub">${EMULATOR.consoles.map(c => `<span class="tag" style="margin:2px">${c.short} ${c.exts}</span>`).join(' ')}</div>
+          <input type="file" id="emuFile" accept=".nes,.sfc,.smc,.gb,.gbc,.gba,.n64,.z64,.v64,.nds,.md,.bin,.cue,.chd,.pbp,.zip,.7z" style="display:none">
+        </div>
+        <div id="emuStage"></div>
+      </section>
+
+      <section class="section">
+        ${UI.sectionHead('Supported systems', EMULATOR.consoles.length)}
+        <div class="res-grid" id="emuGrid">
+          ${EMULATOR.consoles.map(c => `
+          <article class="res-card" data-core="${c.id}" style="cursor:pointer">
+            <div class="res-head">
+              <span class="res-letter" style="background:${c.color}22;color:${c.color}">${c.short}</span>
+              <div class="res-info">
+                <span class="res-name">${esc(c.name)}</span>
+                <span class="res-sub">${c.core} core · ${c.exts}</span>
+              </div>
+            </div>
+          </article>`).join('')}
+        </div>
+      </section>
+
+      <section class="section">
+        ${UI.sectionHead('ROM directories (embedded)', EMULATOR.romDirectories.length)}
+        <div class="privacy-note" style="margin-bottom:var(--sp-3)">
+          ${I.download}
+          <div><b>Multiple sources.</b> Each opens inside Schooless — browse a directory, download a ROM to your device, then load it with the picker above. If one is offline, try another.</div>
+        </div>
+        <div class="res-grid" style="grid-template-columns:repeat(auto-fill,minmax(230px,1fr))">
+          ${EMULATOR.romDirectories.map(d => `
+          <article class="res-card" data-rom-dir="${d.id}" style="cursor:pointer">
+            <div class="res-head">
+              <span class="res-letter">${d.id === 'myrient' ? 'MY' : d.id === 'edgeemu' ? 'EE' : d.id === 'romsfun' ? 'RF' : 'RD'}</span>
+              <div class="res-info">
+                <span class="res-name">${esc(d.name)}${d.primary ? ' ★' : ''}</span>
+                <span class="res-sub">${esc(d.description.slice(0, 60))}…</span>
+              </div>
+            </div>
+          </article>`).join('')}
+        </div>
+      </section>
+    </div>`,
+    bind: () => {
+      const fileInp = $('#emuFile');
+      const stage = $('#emuStage');
+      const start = (file) => {
+        const url = URL.createObjectURL(file);
+        const ext = file.name.split('.').pop().toLowerCase();
+        const byExt = { nes: 'nes', sfc: 'snes', smc: 'snes', gb: 'gb', gbc: 'gb', gba: 'gba', n64: 'n64', z64: 'n64', v64: 'n64', nds: 'nds', md: 'genesis', bin: 'psx', cue: 'psx', chd: 'psx', pbp: 'psx' };
+        const core = byExt[ext] || 'nes';
+        stage.innerHTML = `
+        <div class="player-wrap" style="margin-top:var(--sp-4)">
+          <div class="player-card">
+            <div class="player-toolbar">
+              <div class="pt-info">
+                <div style="min-width:0">
+                  <div class="pt-title">${esc(file.name)}</div>
+                  <div class="pt-src">${core.toUpperCase()} core · EmulatorJS · local file</div>
+                </div>
+              </div>
+              <div class="pt-actions">
+                <button class="icon-btn" id="emuStop" title="Stop">${I.x}</button>
+              </div>
+            </div>
+            <div class="player-stage ar-flex" id="playerStage">
+              <div class="stage-box"><div id="emuMount" style="width:100%;height:100%"></div></div>
+            </div>
+          </div>
+        </div>`;
+        $('#emuStop')?.addEventListener('click', () => { stage.innerHTML = ''; });
+        // EmulatorJS config + loader (EJS_pathtodata required — loader resolves
+        // component paths from it; without it they 404 against the app origin)
+        window.EJS_player = '#emuMount';
+        window.EJS_core = core;
+        window.EJS_gameUrl = url;
+        window.EJS_startOnLoaded = true;
+        window.EJS_pathtodata = EMULATOR.cdn;
+        const s = document.createElement('script');
+        s.src = EMULATOR.cdn + 'loader.js';
+        s.onerror = () => { Toast.show('err', 'EmulatorJS failed to load', 'The CDN may be blocked on this network.'); };
+        document.head.appendChild(s);
+        stage.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      };
+      $('#emuPick')?.addEventListener('click', () => fileInp?.click());
+      fileInp?.addEventListener('change', () => { if (fileInp.files[0]) start(fileInp.files[0]); });
+      const drop = $('#emuDrop');
+      drop?.addEventListener('dragover', (e) => { e.preventDefault(); drop.classList.add('over'); });
+      drop?.addEventListener('dragleave', () => drop.classList.remove('over'));
+      drop?.addEventListener('drop', (e) => {
+        e.preventDefault(); drop.classList.remove('over');
+        const f = e.dataTransfer?.files?.[0];
+        if (f) start(f);
+      });
+      // click a system card → preselect core hint
+      $$('#emuGrid [data-core]').forEach(card => card.addEventListener('click', () => {
+        const c = EMULATOR.consoles.find(x => x.id === card.getAttribute('data-core'));
+        Toast.show('info', c.name, `Load a ${c.exts.split(' ')[0]} file with the picker above.`);
+        $('#emuPick')?.focus();
+      }));
+      // ROM directory cards → open in viewer
+      $$('#emuStage [data-rom-dir], [data-rom-dir]').forEach(card => card.addEventListener('click', () => {
+        const d = EMULATOR.romDirectories.find(x => x.id === card.getAttribute('data-rom-dir'));
+        if (d) Router.go(`/view?u=${encodeURIComponent(d.url)}&n=${encodeURIComponent(d.name + ' — ROM directory')}`);
+      }));
+    } };
+  },
+
+  /* ================= SEARCH ================= */
+  search(params) {
+    const q0 = params.get('q') || '';
+    const engines = [
+      { id: 'duckduckgo', name: 'DuckDuckGo', url: q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`, embed: false },
+      { id: 'google', name: 'Google', url: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`, embed: false },
+      { id: 'bing', name: 'Bing', url: q => `https://www.bing.com/search?q=${encodeURIComponent(q)}`, embed: false },
+      { id: 'nowgg', name: 'now.gg Games', url: q => `https://now.gg/search?q=${encodeURIComponent(q)}`, embed: true },
+    ];
+    return { html: `
+    <div class="container" style="max-width:1000px">
+      <div class="page-head">
+        <div>
+          <h1>Search</h1>
+          <div class="sub">Search the web and open results through the built-in proxy.</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <div class="search-box" style="flex:1">
+          ${I.search}
+          <input id="searchInput" type="search" placeholder="Search anything…" autocomplete="off" value="${esc(q0)}">
+        </div>
+        <select class="select" id="searchEngine" aria-label="Search engine">
+          ${engines.map((e, i) => `<option value="${e.id}" ${i === 0 ? 'selected' : ''}>${e.name}</option>`).join('')}
+        </select>
+        <button class="btn btn-primary" id="searchGo">${I.search} Search</button>
+      </div>
+      <div class="privacy-note">
+        ${I.shield}
+        <div><b>Why a new tab?</b> Search engines (Google, Bing, DuckDuckGo) block being embedded inside other sites, so Schooless hands your query to them in a new tab. now.gg search runs embedded. Anything you find can be opened in the <a href="#/proxy">Proxy Browser</a> — paste the URL there.</div>
+      </div>
+      <div id="searchStage"></div>
+    </div>`,
+    bind: () => {
+      const input = $('#searchInput'), engSel = $('#searchEngine'), stage = $('#searchStage');
+      const go = () => {
+        const q = (input.value || '').trim();
+        if (!q) { stage.innerHTML = UI.empty('search', 'Type something to search', 'Results open on the selected engine.', ''); return; }
+        const eng = engines.find(e => e.id === engSel.value) || engines[0];
+        if (eng.embed) {
+          stage.innerHTML = Player.viewer(eng.url(q), eng.name + ' — ' + q);
+          Player.bindViewer(eng.url(q));
+        } else {
+          // anchor-click handoff: window.open() can navigate the tab in place in some contexts
+          const a = document.createElement('a');
+          a.href = eng.url(q);
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          stage.innerHTML = UI.empty('external', 'Opened in a new tab', `${eng.name} cannot be embedded (it blocks iframes). Paste any result URL into the Proxy Browser to load it inside Schooless.`, `<a class="btn btn-primary btn-sm" href="#/proxy">${I.shield} Open Proxy Browser</a>`);
+        }
+      };
+      $('#searchGo')?.addEventListener('click', go);
+      input?.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    } };
   },
 
   /* ================= PROXIES (unified directory) ================= */
@@ -1653,7 +2225,7 @@ const Pages = {
         <div class="res-grid">${res.map(r => UI.resourceCard(r)).join('')}</div>
       </section>
       <section class="section">
-        ${UI.sectionHead('Web experiences', exps.length)}
+        ${UI.sectionHead('Games', exps.length)}
         <div class="res-grid">${exps.map(e => UI.resourceCard(e, 'experience')).join('')}</div>
       </section>
     </div>` };
@@ -1666,7 +2238,7 @@ const Pages = {
       <div class="page-head">
         <div>
           <h1>Favorites</h1>
-          <div class="sub">Everything you starred — proxies, tools and web experiences, saved on this device.</div>
+          <div class="sub">Everything you starred — games, proxies and tools, saved on this device.</div>
         </div>
         <span class="tag tag-accent" id="favCount"></span>
       </div>
@@ -1688,7 +2260,7 @@ const Pages = {
         $('#favCount').textContent = `${exps.length + res.length} saved`;
         let html = '';
         if (res.length) html += `<section class="section">${UI.sectionHead('Proxies & tools', res.length)}<div class="res-grid">${res.map(r => UI.resourceCard(r)).join('')}</div></section>`;
-        if (exps.length) html += `<section class="section">${UI.sectionHead('Web experiences', exps.length)}<div class="res-grid">${exps.map(e => UI.resourceCard(e, 'experience')).join('')}</div></section>`;
+        if (exps.length) html += `<section class="section">${UI.sectionHead('Games', exps.length)}<div class="res-grid">${exps.map(e => UI.resourceCard(e, 'experience')).join('')}</div></section>`;
         body.innerHTML = html || UI.empty('heart', 'No favorites yet', 'Tap the heart on any entry to keep it here.', `<a class="btn btn-primary" href="#/proxies">${I.globe} Browse Proxies</a>`);
       };
       search?.addEventListener('input', debounce(render, 120));
@@ -1817,7 +2389,7 @@ const Palette = {
       <div class="palette" role="dialog" aria-modal="true" aria-label="Global search">
         <div class="palette-input-row">
           ${I.search}
-          <input id="paletteInput" type="text" placeholder="Search proxies, tools, experiences, pages…" autocomplete="off" spellcheck="false">
+          <input id="paletteInput" type="text" placeholder="Search games, proxies, tools, pages…" autocomplete="off" spellcheck="false">
           <kbd>ESC</kbd>
         </div>
         <div class="palette-results" id="paletteResults"></div>
@@ -1890,7 +2462,10 @@ const Palette = {
     const pages = [
       { title: 'Home', sub: 'Homepage', route: '/', icon: 'home' },
       { title: 'Proxies', sub: 'Unblocked sites & tools directory', route: '/proxies', icon: 'globe' },
-      { title: 'Web Experiences', sub: 'Embedded websites', route: '/experiences', icon: 'sparkles' },
+      { title: 'Games', sub: 'Verified embeddable games', route: '/games', icon: 'gamepad' },
+      { title: 'Proxy Browser', sub: 'Load blocked sites', route: '/proxy', icon: 'shield' },
+      { title: 'Emulator', sub: 'Retro console emulation', route: '/emulator', icon: 'cpu' },
+      { title: 'Search', sub: 'Web search', route: '/search', icon: 'search' },
       { title: 'Recently Added', sub: 'Newest content', route: '/recent', icon: 'clock' },
       { title: 'Favorites', sub: 'Your starred items', route: '/favorites', icon: 'heart' },
       { title: 'Settings', sub: 'Themes, accents, density', route: '/settings', icon: 'settings' },
@@ -1908,7 +2483,7 @@ const Palette = {
     // experiences
     const exps = Content.experiences.filter(e => !q || e.name.toLowerCase().includes(q) || e.description.toLowerCase().includes(q)).slice(0, 4);
     if (exps.length) results.push({
-      group: 'Web Experiences',
+      group: 'Games',
       items: exps.map(e => ({ title: e.name, sub: e.category, route: `/view?u=${encodeURIComponent(e.url)}&n=${encodeURIComponent(e.name)}`, icon: 'globe' })),
     });
 
@@ -1968,7 +2543,7 @@ const Admin = {
           <span class="logo-mark" style="width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),#6D5BE0);color:#fff">${I.logo.replace('viewBox="0 0 32 32"', 'viewBox="0 0 32 32" width="20" height="20"')}</span>
           <div><h2>Admin access</h2></div>
         </div>
-        <p>Sign in to manage directory entries, web experiences and embed settings. This demo gate uses a local password hash — see the README for replacing it with a real backend.</p>
+        <p>Sign in to manage directory entries, games and embed settings. This demo gate uses a local password hash — see the README for replacing it with a real backend.</p>
         <form id="adminLoginForm">
           <div class="field" id="pwField">
             <label for="adminPw">Password</label>
@@ -2015,7 +2590,7 @@ const Admin = {
 
       <div class="admin-tabs" id="adminTabs">
         <button class="admin-tab active" data-tab="resources">Proxies &amp; Tools (${Content.resources.length})</button>
-        <button class="admin-tab" data-tab="experiences">Experiences (${Content.experiences.length})</button>
+        <button class="admin-tab" data-tab="experiences">Games (${Content.experiences.length})</button>
         <button class="admin-tab" data-tab="sources">Sources (${Content.sources.length})</button>
         <button class="admin-tab" data-tab="reports">Reports (${reports.length})</button>
       </div>
@@ -2324,12 +2899,20 @@ const Modal = {
 'use strict';
 
 const App = {
+  /* page-level teardown registry: pages register cleanup fns, mount runs them
+   * before rendering the next route (v5 — prevents leaked listeners) */
+  _pageCleanups: [],
+
   mount(html, bind) {
     Player.destroy();
+    this._pageCleanups.forEach(fn => { try { fn(); } catch { /* noop */ } });
+    this._pageCleanups = [];
     const main = $('#app');
     main.innerHTML = `<div class="page">${html}</div>`;
     if (bind) bind();
   },
+
+  onPageTeardown(fn) { this._pageCleanups.push(fn); },
 
   navbar() {
     return `
@@ -2342,9 +2925,11 @@ const App = {
 
         <div class="nav-links">
           <a class="nav-link" href="#/" data-route="/">${I.home} Home</a>
+          <a class="nav-link" href="#/games" data-route="/games">${I.gamepad} Games</a>
           <a class="nav-link" href="#/proxies" data-route="/proxies">${I.globe} Proxies</a>
-          <a class="nav-link" href="#/experiences" data-route="/experiences">${I.sparkles} Web Experiences</a>
-          <a class="nav-link" href="#/recent" data-route="/recent">${I.clock} Recently Added</a>
+          <a class="nav-link" href="#/proxy" data-route="/proxy" title="Built-in proxy browser">${I.shield} Proxy Browser</a>
+          <a class="nav-link" href="#/emulator" data-route="/emulator">${I.cpu} Emulator</a>
+          <a class="nav-link" href="#/search" data-route="/search">${I.search} Search</a>
         </div>
 
         <div class="nav-actions">
@@ -2359,8 +2944,11 @@ const App = {
     </nav>
     <div class="mobile-menu" id="mobileMenu">
       <a href="#/">${I.home} Home</a>
+      <a href="#/games">${I.gamepad} Games</a>
       <a href="#/proxies">${I.globe} Proxies</a>
-      <a href="#/experiences">${I.sparkles} Web Experiences</a>
+      <a href="#/proxy">${I.shield} Proxy Browser</a>
+      <a href="#/emulator">${I.cpu} Emulator</a>
+      <a href="#/search">${I.search} Search</a>
       <a href="#/recent">${I.clock} Recently Added</a>
       <a href="#/favorites">${I.heart} Favorites</a>
       <a href="#/settings">${I.settings} Settings</a>
@@ -2376,13 +2964,16 @@ const App = {
             <span class="logo-mark">${I.logo}</span>
             <span><b>SCHOOLess</b></span>
           </a>
-          <p>Your gateway to everything — web experiences and useful resources in one clean place. Favorites and settings stay on your device.</p>
+          <p>Your gateway to everything — games, proxies, emulators and useful resources in one clean place. Favorites and settings stay on your device.</p>
         </div>
         <div class="f-cols">
           <div class="f-col">
             <h4>Explore</h4>
-            <a href="#/proxies">Proxies</a>
-            <a href="#/experiences">Web Experiences</a>
+            <a href="#/games">Games</a>
+            <a href="#/proxy">Proxy Browser</a>
+            <a href="#/emulator">Emulator</a>
+            <a href="#/search">Search</a>
+            <a href="#/proxies">Proxy Directory</a>
             <a href="#/recent">Recently Added</a>
             <a href="#/favorites">Favorites</a>
           </div>
@@ -2428,9 +3019,12 @@ const App = {
 
     // routes
     Router.register(/^\/$/, () => this.mount(Pages.home(), () => Pages.bindHome()));
-    Router.register(/^\/experiences$/, () => { const v = Pages.experiences(); this.mount(v.html, v.bind); });
+    Router.register(/^\/games$/, () => { const v = Pages.games(); this.mount(v.html, v.bind); });
     Router.register(/^\/view$/, (m, params) => { const v = Pages.viewer(params); this.mount(v.html, v.bind); });
     Router.register(/^\/proxies$/, () => { const v = Pages.proxies(); this.mount(v.html, v.bind); });
+    Router.register(/^\/proxy$/, (m, params) => { const v = Pages.proxyBrowser(params); this.mount(v.html, v.bind); });
+    Router.register(/^\/emulator$/, (m, params) => { const v = Pages.emulator(params); this.mount(v.html, v.bind); });
+    Router.register(/^\/search$/, (m, params) => { const v = Pages.search(params); this.mount(v.html, v.bind); });
     Router.register(/^\/recent$/, () => this.mount(Pages.recent().html));
     Router.register(/^\/favorites$/, () => { const v = Pages.favorites(); this.mount(v.html, v.bind); });
     Router.register(/^\/settings$/, () => { const v = Pages.settings(); this.mount(v.html, v.bind); });
